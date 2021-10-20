@@ -13,9 +13,10 @@ public class ColorPicker extends JPanel implements ActionListener {
     MandelbrotSet mandelbrotPanel;
     int currentFractalType = 0; //0: Pythagoras tree. 1: Mandelbrot set. 2: Phoenix set.
     int pickerType;
+    JLabel colorLabel;
 
     ColorPicker(int pickerType, Color color, JButton pickButton) {
-        JLabel colorLabel = new JLabel();
+        colorLabel = new JLabel();
         switch (pickerType) {
             case 0: //Background Color 1
                 colorLabel.setText("Background Color 1");
@@ -82,6 +83,9 @@ public class ColorPicker extends JPanel implements ActionListener {
                     break;
                 case 1: //Background Color 2
                     switch (this.currentFractalType) {
+                        case 0: //for the Pythagoras Tree, we will use bg color 2 as the triangle color
+                            pythagorasPanel.setTriangleColor(this.color);
+                            break;
                         case 1: //Mandelbrot Set
                             mandelbrotPanel.setBackgroundColor(2, this.color);
                             break;
@@ -114,5 +118,10 @@ public class ColorPicker extends JPanel implements ActionListener {
         Dimension dim = super.getMaximumSize();
         dim.height = 50;
         return dim;
+    }
+
+    void setLabelText(String newText) {
+        this.colorLabel.setText(newText);
+        this.repaint();
     }
 }

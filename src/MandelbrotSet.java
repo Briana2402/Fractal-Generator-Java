@@ -3,32 +3,49 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import java.util.stream.IntStream;
+
 public class MandelbrotSet extends JPanel {
     //Defining constants
-    final static double STARTING_X = -3;
-    final static double STARTING_Y = 2;
-    final static double DOMAIN = 6;
-    final static double RANGE = 4;
-    final static int AMOUNT_OF_SECTIONS = 20;
-    final static int RESOLUTION = 3;
+    final static int RESOLUTION = 4;
+    double MIN_X = -2.5;
+    double MAX_X = 1.5;
+    double MIN_Y = -1.5;
+    double MAX_Y = 1.5;
+    
     
     //Defining variables used by the whole class
     int SCREENX = 800;
     int SCREENY = 600;
+    double MOVE_X = 0;
+    double MOVE_Y = 0;
     double xPixel; //the x coordinate in a graph corresponding to a pixel in screen space
     double yPixel; //the y coordinate in a graph corresponding to a pixel in screen space
     int iterations;
+    int AMOUNT_OF_SECTIONS;
     int backgroundColor = colorToHex(Color.DARK_GRAY);
     int backgroundColor2 = colorToHex(Color.RED);
-    int[] backgroundColors = new int[AMOUNT_OF_SECTIONS];
+    int[] backgroundColors;
     int foregroundColor = colorToHex(Color.ORANGE);
 
-    BufferedImage fractal;
+    int mouseX = 0;
+    int mouseY = 0;
+
+    private BufferedImage fractal;
 
     MandelbrotSet() {
         this.iterations = 100;
+        this.AMOUNT_OF_SECTIONS = this.iterations;
+        this.backgroundColors = new int[iterations + 2];
+        this.backgroundColors[0] = backgroundColor;
+        this.backgroundColors[iterations + 1] = backgroundColor2;
+        this.xPixel = (MAX_X - MIN_X) / (SCREENX - 1); 
+        this.yPixel = (MAX_Y - MIN_Y) / (SCREENY - 1);
         initialise();
         this.addComponentListener(new ResizeListener());
+        this.addMouseListener(new MouseManipulation());
+        this.addMouseWheelListener(new MouseManipulation());
+        this.addMouseMotionListener(new MouseManipulation());
     }
 
     @Override
@@ -44,8 +61,6 @@ public class MandelbrotSet extends JPanel {
     }
 
     public void initialise() {
-        xPixel = DOMAIN / (SCREENX * RESOLUTION - 1); 
-        yPixel = RANGE / (SCREENY * RESOLUTION - 1);
         determineColorForLevel(backgroundColor2, backgroundColor);
         this.setPreferredSize(new Dimension(SCREENX, SCREENY));
         this.setSize(new Dimension(SCREENX, SCREENY));
@@ -54,14 +69,64 @@ public class MandelbrotSet extends JPanel {
     }
 
     public void drawSet() {
-        for (int x = 0; x < SCREENX; ++x) { //horizontal pixels
-            for (int y = 0; y < SCREENY; ++y) { //vertical pixels
+        Thread t1 = new Thread(() -> drawSetUpLeft());
+        Thread t2 = new Thread(() -> drawSetUpRight());
+        Thread t3 = new Thread(() -> drawSetDownRight());
+        Thread t4 = new Thread(() -> drawSetDownLeft());
+        t1.start();
+        t2.start();
+        t3.start();
+        t4.start();
+    }
+
+    public void drawSetUpLeft() {
+        //IntStream used for multithreading
+        IntStream.range(0, SCREENX / 2).parallel().forEach(x -> { //horizontal pixels
+            IntStream.range(0, SCREENY / 2).parallel().forEach(y -> { //vertical pixels
                 int pixelColor = determineColor(x, y);
                 fractal.setRGB(x, y, pixelColor);
-            }
-        }
+            });
+        });
 
-        this.revalidate();
+        this.repaint();
+    }
+
+    public void drawSetUpRight() 
+    {
+        //IntStream used for multithreading
+        IntStream.range(SCREENX / 2 - 1, SCREENX).parallel().forEach(x -> { //horizontal pixels
+            IntStream.range(0, SCREENY / 2).parallel().forEach(y -> { //vertical pixels
+                int pixelColor = determineColor(x, y);
+                fractal.setRGB(x, y, pixelColor);
+            });
+        });
+
+        this.repaint();
+    }
+
+    public void drawSetDownRight() 
+    {
+        //IntStream used for multithreading
+        IntStream.range(SCREENX / 2 - 1, SCREENX).parallel().forEach(x -> { //horizontal pixels
+            IntStream.range(SCREENY / 2 - 1, SCREENY).parallel().forEach(y -> { //vertical pixels
+                int pixelColor = determineColor(x, y);
+                fractal.setRGB(x, y, pixelColor);
+            });
+        });
+
+        this.repaint();
+    }
+
+    public void drawSetDownLeft() 
+    {
+        //IntStream used for multithreading
+        IntStream.range(0, SCREENX / 2).parallel().forEach(x -> { //horizontal pixels
+            IntStream.range(SCREENY / 2 - 1, SCREENY).parallel().forEach(y -> { //vertical pixels
+                int pixelColor = determineColor(x, y);
+                fractal.setRGB(x, y, pixelColor);
+            });
+        });
+
         this.repaint();
     }
 
@@ -72,25 +137,15 @@ public class MandelbrotSet extends JPanel {
         ComplexNumber z = number; 
         int iteration;
         for (iteration = 0; iteration < this.iterations; ++iteration) {
-            if (z.absoluteValue() > 2.0) { //if the complex number is larger than 2, it diverges
+            if (z.absoluteValue() > 4.0) { //if the complex number is larger than 2, it diverges
                 break; //we end the for loop
             }
 
-            z = z.multiplication(z); //we square the complex number
+            z = z.square(); //we square the complex number
             z = z.addition(number); //we add the 'c'
         }
 
-        if (iteration == this.iterations) { //if it converged, its part of the set so we paint it the body color
-            return foregroundColor;
-        } else {
-            if (iteration == 0) {
-                return backgroundColor;
-            } else if (iteration >= 1 && iteration <= AMOUNT_OF_SECTIONS) {
-                return backgroundColors[iteration - 1];
-            } else {
-                return backgroundColor2;
-            }
-        }
+        return (iteration == this.iterations) ? this.foregroundColor : this.backgroundColors[iteration];
     }
 
     public void determineColorForLevel(int color1, int color2) {
@@ -119,26 +174,40 @@ public class MandelbrotSet extends JPanel {
      * @return
      */
     public ComplexNumber convertToComplex(int x, int y) {
-        double real = STARTING_X + x * xPixel;
-        double imaginary = STARTING_Y - y * yPixel;
+        double real = MIN_X + x * xPixel + MOVE_X;
+        double imaginary = MAX_Y - y * yPixel + MOVE_Y;
 
         return new ComplexNumber(real, imaginary);
     }
 
-    public int colorToHex(Color color) {
-        int red = color.getRed();
-        int green = color.getGreen();
-        int blue = color.getBlue();
-        String hex = String.format("0x%02X%02X%02X", red, green, blue);
-        //System.out.println(hex);
-        int hexColor = Integer.decode(hex);
-        return hexColor;
+    public void zoom(int pixels) {
+        this.MAX_X = this.MIN_X + (xPixel * (double) (SCREENX - pixels));
+        this.MIN_X += xPixel * (double) pixels;
+        this.MAX_Y = this.MIN_Y + (yPixel * (SCREENY - ((double) pixels * SCREENY / SCREENX)));
+        this.MIN_Y += yPixel * (double) pixels * SCREENY / SCREENX;
+        this.xPixel = (MAX_X - MIN_X) / (SCREENX - 1); 
+        this.yPixel = (MAX_Y - MIN_Y) / (SCREENY - 1);
+
+        drawSet();
+        this.repaint();
+    }
+
+    public void moveFractal(double dx, double dy) {
+        this.MOVE_X -= 2 * dx * xPixel;
+        this.MOVE_Y += 2 * dy * yPixel;
+        drawSet();
+        this.repaint();
+    }
+
+    private static int colorToHex(Color color) {
+        return color.getRGB();
     }
 
     public void setBackgroundColor(int c, Color newColor) {
         int intNewColor = colorToHex(newColor);
         if (c == 1) {
             this.backgroundColor = intNewColor;
+            this.setBackground(newColor);
             determineColorForLevel(backgroundColor2, backgroundColor);
         } else {
             this.backgroundColor2 = intNewColor;
@@ -165,5 +234,54 @@ public class MandelbrotSet extends JPanel {
         this.SCREENX = newWidth;
         this.SCREENY = newHeight;
         initialise();
+    }
+
+    public void setMousePoint(Point newPoint) {
+        this.mouseX = (int) newPoint.getX();
+        this.mouseY = (int) newPoint.getY();
+    }
+
+    public Point getMousePoint() {
+        return new Point(this.mouseX, this.mouseY);
+    }
+
+    public int getScreenX() {
+        return this.SCREENX;
+    }
+
+    public int getScreenY() {
+        return this.SCREENY;
+    }
+
+    public BufferedImage getFractal() {
+        return this.fractal;
+    }
+
+    public int getIterations() {
+        return this.iterations;
+    }
+
+    public int getForegroundColor() {
+        return this.foregroundColor;
+    }
+
+    public int[] getBackgroundColors() {
+        return this.backgroundColors;
+    }
+
+    public double getMoveX() {
+        return this.MOVE_X;
+    }
+
+    public double getMoveY() {
+        return this.MOVE_Y;
+    }
+
+    public double getXPixel() {
+        return this.xPixel;
+    }
+
+    public double getYPixel() {
+        return this.yPixel;
     }
 }

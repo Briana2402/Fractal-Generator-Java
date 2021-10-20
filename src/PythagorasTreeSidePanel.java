@@ -18,6 +18,7 @@ public class PythagorasTreeSidePanel extends SidePanel{
         JButton pickBg1 = new JButton("Pick");
         JButton pickLn = new JButton("Pick");
         JButton pickFg = new JButton("Pick");
+        JButton pickTg = new JButton("Pick");
         JLabel labelAngleSize = new JLabel("Size of Acute Angle: ");
         JLabel labelIterationNum = new JLabel("Number of Iterations");
         labelAngleSize.setForeground(Color.WHITE);
@@ -34,14 +35,17 @@ public class PythagorasTreeSidePanel extends SidePanel{
         pickBg1.setAlignmentX(Component.CENTER_ALIGNMENT);
         pickLn.setAlignmentX(Component.CENTER_ALIGNMENT);
         pickFg.setAlignmentX(Component.CENTER_ALIGNMENT);
+        pickTg.setAlignmentX(Component.CENTER_ALIGNMENT);
         labelAngleSize.setAlignmentX(Component.CENTER_ALIGNMENT);
         labelIterationNum.setAlignmentX(Component.CENTER_ALIGNMENT);
         labelAngleSize.setBorder(BorderFactory.createEmptyBorder(50, 20, 10, 20));
         labelIterationNum.setBorder(BorderFactory.createEmptyBorder(50, 20, 10, 20));
 
         ColorPicker bgColor1Picker = new ColorPicker(0, Color.LIGHT_GRAY, pickBg1, fractalPanel); //0 is for background 1 picker
-        ColorPicker lnColorPicker = new ColorPicker(3, Color.BLACK, pickLn, fractalPanel); //1 is for background 2 picker
+        ColorPicker lnColorPicker = new ColorPicker(3, Color.BLACK, pickLn, fractalPanel); //3 is for line picker
         ColorPicker fgColorPicker = new ColorPicker(2, new Color (39, 110, 245), pickFg, fractalPanel); //2 is for foreground picker
+        ColorPicker tgColorPicker = new ColorPicker(1, new Color (200, 4, 21), pickTg, fractalPanel); //1 is for triangle picker
+        tgColorPicker.setLabelText("Triangle Color");
 
         angleSize.getDocument().addDocumentListener(new DocumentListener(){
             @Override
@@ -147,6 +151,8 @@ public class PythagorasTreeSidePanel extends SidePanel{
         this.add(pickLn);
         this.add(fgColorPicker);
         this.add(pickFg);
+        this.add(tgColorPicker);
+        this.add(pickTg);
         this.add(labelAngleSize);
         this.add(angleSize);
         this.add(labelIterationNum);

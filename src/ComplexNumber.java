@@ -26,11 +26,16 @@ public class ComplexNumber {
         return new ComplexNumber(a - d, b + c);
     }
 
-    double absoluteValue() {
-        double real = this.getReal();
-        double imaginary = this.getImaginary();
+    ComplexNumber square() {
+        double a = this.real * this.real;
+        double b = this.imaginary * this.imaginary;
+        double c = this.real * this.imaginary;
 
-        return Math.hypot(real, imaginary);
+        return new ComplexNumber(a - b, 2 * c);
+    }
+
+    double absoluteValue() {
+        return this.real * this.real + this.imaginary * this.imaginary;
     }
 
     double getReal() {

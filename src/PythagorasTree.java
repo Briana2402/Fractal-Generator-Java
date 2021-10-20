@@ -4,6 +4,10 @@ import java.awt.geom.Path2D;
 
 //TODO Maybe if u do super.drawline it could have worked
 
+//TODO instead of making the alpha value 50% make it paint the squares first and then the lines
+
+//TODO stop going between hex angle and radians constantly
+
 public class PythagorasTree extends JPanel{
     //Define constants
     final int STARTING_X = 200;
@@ -14,6 +18,7 @@ public class PythagorasTree extends JPanel{
     //Define variables used by the whole class
     Color backgroundColor;
     Color foregroundColor;
+    Color triangleColor;
     Color lineColor;
     int angle;
     int iterations;
@@ -25,7 +30,8 @@ public class PythagorasTree extends JPanel{
 
     PythagorasTree() {
         this.backgroundColor = Color.LIGHT_GRAY;
-        this.foregroundColor = new Color (39, 110, 245, 200);
+        this.foregroundColor = new Color (39, 110, 245, 127);
+        this.triangleColor = new Color (200, 4, 21, 127);
         this.lineColor = Color.BLACK;
 
         this.angle = 45;
@@ -37,9 +43,11 @@ public class PythagorasTree extends JPanel{
         this.setSize(new Dimension(SCREENX, SCREENY));
     }
 
-    PythagorasTree(Color backgroundColor, Color foregroundColor, Color lineColor) {
+    PythagorasTree(Color backgroundColor, Color foregroundColor, Color triangleColor, Color lineColor) {
         this.backgroundColor = backgroundColor;
         this.foregroundColor = foregroundColor;
+        this.triangleColor = triangleColor;
+
         this.lineColor = lineColor;
 
         this.angle = 30;
@@ -60,6 +68,16 @@ public class PythagorasTree extends JPanel{
         currentSquare.closePath();      //finishes the square by turning it into a closed shape
 
         return currentSquare;
+    }
+
+    private Path2D createTriangle(double x1, double y1, double x2, double y2, double x3, double y3) {
+        Path2D currentTriangle = new Path2D.Double();
+        currentTriangle.moveTo(x1, y1);
+        currentTriangle.lineTo(x2, y2);
+        currentTriangle.lineTo(x3, y3);
+        currentTriangle.closePath();
+
+        return currentTriangle;
     }
 
     /*private void drawLines(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
@@ -119,15 +137,11 @@ public class PythagorasTree extends JPanel{
         g.setColor(lineColor);          //draws the line around the perimeter of the square
         g.draw(currentSquare);
 
-        /*Path2D triangle = new Path2D.Double();
-        triangle.moveTo(x3, y3);
-        triangle.lineTo(x5, y5);
-        triangle.lineTo(x4, y4);
-        triangle.closePath();
-        g.setColor(Color.ORANGE);
-        g.fill(triangle);
-        g.setColor(Color.BLACK);
-        g.draw(triangle);*/
+        Path2D currentTriangle = createTriangle(x3, y3, x5, y5, x4, y4);
+        g.setColor(triangleColor);
+        g.fill(currentTriangle);
+        g.setColor(lineColor);
+        g.draw(currentTriangle);
 
         //draws the next squares
         drawPythagorasTree(g, iteration + 1, x3, y3, x5, y5, currentAngle + angle);
@@ -155,10 +169,20 @@ public class PythagorasTree extends JPanel{
         int red = newFgColor.getRed();
         int green = newFgColor.getGreen();
         int blue = newFgColor.getBlue();
-        Color newColor = new Color (red, green, blue, 200);
+        Color newColor = new Color (red, green, blue, 127);
         this.foregroundColor = newColor;
         this.repaint();
         System.out.println("Foreground Changed");
+    }
+
+    void setTriangleColor(Color newTgColor) {
+        int red = newTgColor.getRed();
+        int green = newTgColor.getGreen();
+        int blue = newTgColor.getBlue();
+        Color newColor = new Color (red, green, blue, 127);
+        this.triangleColor = newColor;
+        this.repaint();
+        System.out.println("Triangle Changed");
     }
 
     void setLineColor(Color newLnColor) {
