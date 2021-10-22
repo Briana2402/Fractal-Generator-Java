@@ -5,8 +5,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-public class JuliaSetSidePanel extends SidePanel{
-    JuliaSet fractalPanel;
+public class PhoenixSetSidePanel extends SidePanel{
+    PhoenixSet fractalPanel;
     JTextField iterations;
     JSplitPane mainScreen;
     ColorPicker bg1ColorPicker;
@@ -15,7 +15,7 @@ public class JuliaSetSidePanel extends SidePanel{
     JTextField c_real;
     JTextField c_img;
 
-    JuliaSetSidePanel(JSplitPane mainScreen, int iterationsNum, int bgColor1, int bgColor2, int fgColor, double c_real_val, double c_img_val) {
+    PhoenixSetSidePanel(JSplitPane mainScreen, int iterationsNum, int bgColor1, int bgColor2, int fgColor, double c_real_val, double c_img_val) {
         super();
 
         this.mainScreen = mainScreen;
@@ -68,13 +68,13 @@ public class JuliaSetSidePanel extends SidePanel{
                         "ERROR",
                         JOptionPane.ERROR_MESSAGE);
                     } else {
-                        JuliaSet juliaSet = (JuliaSet) mainScreen.getRightComponent();
-                        int bgColor1 = juliaSet.getBackgroundColor(0);
-                        int bgColor2 = juliaSet.getBackgroundColor(1);
-                        int fgColor = juliaSet.getForegroundColor();
-                        double c_real = juliaSet.getCReal();
-                        double c_img = juliaSet.getCImg();
-                        mainScreen.setRightComponent(new JuliaSet(iterationsNumber, bgColor1, bgColor2, fgColor, c_real, c_img));
+                        PhoenixSet phoenixSet = (PhoenixSet) mainScreen.getRightComponent();
+                        int bgColor1 = phoenixSet.getBackgroundColor(0);
+                        int bgColor2 = phoenixSet.getBackgroundColor(1);
+                        int fgColor = phoenixSet.getForegroundColor();
+                        double c_real = phoenixSet.getCReal();
+                        double c_img = phoenixSet.getCImg();
+                        mainScreen.setRightComponent(new PhoenixSet(iterationsNumber, bgColor1, bgColor2, fgColor, mainScreen, c_real, c_img));
                         updateFractalPanel();
                         updateColorPickers();
                     }
@@ -99,19 +99,19 @@ public class JuliaSetSidePanel extends SidePanel{
             public void actionPerformed(ActionEvent e) {
                 try {
                     Double newCReal = Double.parseDouble(c_real.getText());
-                    JuliaSet juliaSet = (JuliaSet) mainScreen.getRightComponent();
-                    int iterationsNumber = juliaSet.getIterations();
-                    int bgColor1 = juliaSet.getBackgroundColor(0);
-                    int bgColor2 = juliaSet.getBackgroundColor(1);
-                    int fgColor = juliaSet.getForegroundColor();
-                    double moveX = juliaSet.getMoveX();
-                    double moveY = juliaSet.getMoveY();
-                    double minX = juliaSet.getMinX();
-                    double maxX = juliaSet.getMaxX();
-                    double minY = juliaSet.getMinY();
-                    double maxY = juliaSet.getMaxY();
-                    double c_img_value = juliaSet.getCImg();
-                    JuliaSet newJuliaSet = new JuliaSet(iterationsNumber, moveX, moveY, minX, maxX, minY, maxY, bgColor1, bgColor2, fgColor, newCReal, c_img_value);
+                    PhoenixSet phoenixSet = (PhoenixSet) mainScreen.getRightComponent();
+                    int iterationsNumber = phoenixSet.getIterations();
+                    int bgColor1 = phoenixSet.getBackgroundColor(0);
+                    int bgColor2 = phoenixSet.getBackgroundColor(1);
+                    int fgColor = phoenixSet.getForegroundColor();
+                    double moveX = phoenixSet.getMoveX();
+                    double moveY = phoenixSet.getMoveY();
+                    double minX = phoenixSet.getMinX();
+                    double maxX = phoenixSet.getMaxX();
+                    double minY = phoenixSet.getMinY();
+                    double maxY = phoenixSet.getMaxY();
+                    double c_img_value = phoenixSet.getCImg();
+                    PhoenixSet newJuliaSet = new PhoenixSet(iterationsNumber, moveX, moveY, minX, maxX, minY, maxY, bgColor1, bgColor2, fgColor, mainScreen, newCReal, c_img_value);
                     mainScreen.setRightComponent(newJuliaSet);
                     updateFractalPanel();
                     updateColorPickers();
@@ -136,19 +136,19 @@ public class JuliaSetSidePanel extends SidePanel{
             public void actionPerformed(ActionEvent e) {
                 try {
                     Double newCImg = Double.parseDouble(c_img.getText());
-                    JuliaSet juliaSet = (JuliaSet) mainScreen.getRightComponent();
-                    int iterationsNumber = juliaSet.getIterations();
-                    int bgColor1 = juliaSet.getBackgroundColor(0);
-                    int bgColor2 = juliaSet.getBackgroundColor(1);
-                    int fgColor = juliaSet.getForegroundColor();
-                    double moveX = juliaSet.getMoveX();
-                    double moveY = juliaSet.getMoveY();
-                    double minX = juliaSet.getMinX();
-                    double maxX = juliaSet.getMaxX();
-                    double minY = juliaSet.getMinY();
-                    double maxY = juliaSet.getMaxY();
-                    double c_real_value = juliaSet.getCReal();
-                    JuliaSet newJuliaSet = new JuliaSet(iterationsNumber, moveX, moveY, minX, maxX, minY, maxY, bgColor1, bgColor2, fgColor, c_real_value, newCImg);
+                    PhoenixSet phoenixSet = (PhoenixSet) mainScreen.getRightComponent();
+                    int iterationsNumber = phoenixSet.getIterations();
+                    int bgColor1 = phoenixSet.getBackgroundColor(0);
+                    int bgColor2 = phoenixSet.getBackgroundColor(1);
+                    int fgColor = phoenixSet.getForegroundColor();
+                    double moveX = phoenixSet.getMoveX();
+                    double moveY = phoenixSet.getMoveY();
+                    double minX = phoenixSet.getMinX();
+                    double maxX = phoenixSet.getMaxX();
+                    double minY = phoenixSet.getMinY();
+                    double maxY = phoenixSet.getMaxY();
+                    double c_real_value = phoenixSet.getCReal();
+                    PhoenixSet newJuliaSet = new PhoenixSet(iterationsNumber, moveX, moveY, minX, maxX, minY, maxY, bgColor1, bgColor2, fgColor, mainScreen, c_real_value, newCImg);
                     mainScreen.setRightComponent(newJuliaSet);
                     updateFractalPanel();
                     updateColorPickers();
@@ -183,13 +183,13 @@ public class JuliaSetSidePanel extends SidePanel{
     }
 
     private void updateFractalPanel() {
-        this.fractalPanel = (JuliaSet) mainScreen.getRightComponent();
+        this.fractalPanel = (PhoenixSet) mainScreen.getRightComponent();
     }
 
     private void updateColorPickers() {
-        JuliaSet juliaSet = (JuliaSet) mainScreen.getRightComponent();
-        bg1ColorPicker.updateFractalPanel(juliaSet);
-        bg2ColorPicker.updateFractalPanel(juliaSet);
-        fgColorPicker.updateFractalPanel(juliaSet);
+        PhoenixSet phoenixSet = (PhoenixSet) mainScreen.getRightComponent();
+        bg1ColorPicker.updateFractalPanel(phoenixSet);
+        bg2ColorPicker.updateFractalPanel(phoenixSet);
+        fgColorPicker.updateFractalPanel(phoenixSet);
     }
 }
