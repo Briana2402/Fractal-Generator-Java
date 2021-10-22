@@ -1,3 +1,8 @@
+/**
+ * @author Iliyan Teofilov
+ * @ID 1671952. Group2b
+ */
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -5,16 +10,23 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class ColorPicker extends JPanel implements ActionListener {
-    //Define constants
-    final static Color backgroundColor = new Color (0x123456);
+    //Define variables used by the whole class
+    Color backgroundColor = new Color (0x123456);
     JTextArea colorPreview = new JTextArea();
     Color color;
     PythagorasTree pythagorasPanel;
     MandelbrotSet mandelbrotPanel;
+    PhoenixSet phoenixPanel;
     int currentFractalType = 0; //0: Pythagoras tree. 1: Mandelbrot set. 2: Phoenix set.
     int pickerType;
     JLabel colorLabel;
 
+    /**
+     * Color picker constructor. Creates a new color picker with the following properties.
+     * @param pickerType color picker type.0: backgrund color1. 1: bacgkrund clor 2. 2: foreground color. 3: line color
+     * @param color default color selected
+     * @param pickButton button that opens up color picker
+     */
     ColorPicker(int pickerType, Color color, JButton pickButton) {
         colorLabel = new JLabel();
         switch (pickerType) {
@@ -51,16 +63,43 @@ public class ColorPicker extends JPanel implements ActionListener {
         this.setBackground(backgroundColor);
     }
 
+    /**
+     * Color picker constructor. Creates a new color picker with the following properties.
+     * @param pickerType color picker type.0: backgrund color1. 1: bacgkrund clor 2. 2: foreground color. 3: line color
+     * @param color default color selected
+     * @param pickButton button that opens up color picker
+     * @param fractalPanel fractal panel that the color picker controls
+     */
     ColorPicker(int pickerType, Color color, JButton pickButton, PythagorasTree fractalPanel) {
         this(pickerType, color, pickButton);
         this.pythagorasPanel = fractalPanel;
         this.currentFractalType = 0;
     }
 
+    /**
+     * Color picker constructor. Creates a new color picker with the following properties.
+     * @param pickerType color picker type.0: backgrund color1. 1: bacgkrund clor 2. 2: foreground color. 3: line color
+     * @param color default color selected
+     * @param pickButton button that opens up color picker
+     * @param fractalPanel fractal panel that the color picker controls
+     */
     ColorPicker(int pickerType, Color color, JButton pickButton, MandelbrotSet fractalPanel) {
         this(pickerType, color, pickButton);
         this.mandelbrotPanel = fractalPanel;
         this.currentFractalType = 1;
+    }
+
+    /**
+     * Color picker constructor. Creates a new color picker with the following properties.
+     * @param pickerType color picker type.0: backgrund color1. 1: bacgkrund clor 2. 2: foreground color. 3: line color
+     * @param color default color selected
+     * @param pickButton button that opens up color picker
+     * @param fractalPanel fractal panel that the color picker controls
+     */
+    ColorPicker(int pickerType, Color color, JButton pickButton, PhoenixSet fractalPanel) {
+        this(pickerType, color, pickButton);
+        this.phoenixPanel = fractalPanel;
+        this.currentFractalType = 2;
     }
 
     //check for the button press
@@ -78,6 +117,9 @@ public class ColorPicker extends JPanel implements ActionListener {
                         case 1: //Mandelbrot Set
                             mandelbrotPanel.setBackgroundColor(1, this.color);
                             break;
+                        case 2: //Phoenix Set
+                            phoenixPanel.setBackgroundColor(1, this.color);
+                            break;
                         default: break;
                     }
                     break;
@@ -89,6 +131,9 @@ public class ColorPicker extends JPanel implements ActionListener {
                         case 1: //Mandelbrot Set
                             mandelbrotPanel.setBackgroundColor(2, this.color);
                             break;
+                        case 2: //Phoenix Set
+                            phoenixPanel.setBackgroundColor(2, this.color);
+                            break;
                         default: break;
                     }
                     break;
@@ -99,6 +144,9 @@ public class ColorPicker extends JPanel implements ActionListener {
                             break;
                         case 1: //Mandelbrot Set
                             mandelbrotPanel.setForegroundColor(this.color);
+                            break;
+                        case 2: //Phoenix Set
+                            phoenixPanel.setForegroundColor(this.color);
                             break;
                         default: break;
                     }
@@ -123,5 +171,13 @@ public class ColorPicker extends JPanel implements ActionListener {
     void setLabelText(String newText) {
         this.colorLabel.setText(newText);
         this.repaint();
+    }
+
+    void updateFractalPanel(MandelbrotSet mandelbrotSet) {
+        this.mandelbrotPanel = mandelbrotSet;
+    }
+
+    void updateFractalPanel(PhoenixSet phoenixSet) {
+        this.phoenixPanel = phoenixSet;
     }
 }

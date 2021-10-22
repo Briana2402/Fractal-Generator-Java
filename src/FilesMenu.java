@@ -1,3 +1,8 @@
+/**
+ * @author Iliyan Teofilov
+ * @ID 1671952. Group2b
+ */
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -18,6 +23,10 @@ public class FilesMenu extends JMenu implements ActionListener{
     //Define variables used by the whole class
     JSplitPane mainScreen;
 
+    /**
+     * Files Menu constructor. Creates a new File Menu.
+     * @param mainScreen main screen that the files menu controls.
+     */
     FilesMenu(JSplitPane mainScreen) {
         this.mainScreen = mainScreen;
 
@@ -25,6 +34,7 @@ public class FilesMenu extends JMenu implements ActionListener{
         JMenuItem load = new JMenuItem("Load");
         JMenuItem exit = new JMenuItem("Exit");
 
+        //initialise all menu items with accelerators and mnemonics
         save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
         save.setMnemonic(KeyEvent.VK_S);
         save.setActionCommand(SAVE_SETTINGS);
@@ -49,13 +59,14 @@ public class FilesMenu extends JMenu implements ActionListener{
         this.setMnemonic(KeyEvent.VK_F);
     }
 
+    //check for when it is pressed
     @Override
     public void actionPerformed(ActionEvent e) {
         System.out.println(e.getActionCommand());
-
+        //act according to which button is pressed
         switch (e.getActionCommand()) {
-            case EXIT_PROGRAM: System.exit(0); break;
-            case SAVE_SETTINGS:
+            case EXIT_PROGRAM: System.exit(0); break; //exit program
+            case SAVE_SETTINGS: //save current settings to file
                 String fileName = JOptionPane.showInputDialog("Enter a file name to save to.\n(no need for extension)");
                 fileName += ".txt";
                 if (!fileName.equals("null.txt")) {
@@ -75,47 +86,50 @@ public class FilesMenu extends JMenu implements ActionListener{
                             pw.println(pythagorasTree.getTriangleColor()); //rgb triangle color
                             pw.println(pythagorasTree.getLineColor()); //rgb line color
                         }
-                        if (this.mainScreen.getRightComponent() instanceof MandelbrotSet) { //if we are dealing with a mandelbrot set
+                        if (this.mainScreen.getRightComponent() instanceof MandelbrotSet && !(this.mainScreen.getRightComponent() instanceof PhoenixSet)) { //if we are dealing with a mandelbrot set
                             MandelbrotSet mandelbrotSet = (MandelbrotSet) this.mainScreen.getRightComponent();
                             pw.println("Settings for Mandelbrot Set.");
-                            pw.println(mandelbrotSet.getIterations());
-                            pw.println(mandelbrotSet.getMoveX());
-                            pw.println(mandelbrotSet.getMoveY());
-                            pw.println(mandelbrotSet.getMinX());
-                            pw.println(mandelbrotSet.getMaxX());
-                            pw.println(mandelbrotSet.getMinY());
-                            pw.println(mandelbrotSet.getMaxY());
-                            pw.println(mandelbrotSet.getBackgroundColor(0));
-                            pw.println(mandelbrotSet.getBackgroundColor(1));
-                            pw.println(mandelbrotSet.getForegroundColor());
+                            pw.println(mandelbrotSet.getIterations()); //number of iterations
+                            pw.println(mandelbrotSet.getMoveX()); //movement in X
+                            pw.println(mandelbrotSet.getMoveY()); //movement in Y
+                            pw.println(mandelbrotSet.getMinX()); //minimum X value read in the graph
+                            pw.println(mandelbrotSet.getMaxX()); //maximum X value read in the graph
+                            pw.println(mandelbrotSet.getMinY()); //minimum Y value read in the graph
+                            pw.println(mandelbrotSet.getMaxY()); //maximum Y value read in the graph
+                            pw.println(mandelbrotSet.getBackgroundColor(0)); //background color 1
+                            pw.println(mandelbrotSet.getBackgroundColor(1)); //background color 2
+                            pw.println(mandelbrotSet.getForegroundColor()); //foreground color
                         }
                         if (this.mainScreen.getRightComponent() instanceof PhoenixSet) { //if we are dealing with a julia set / phoenix set
                             PhoenixSet phoenixSet = (PhoenixSet) this.mainScreen.getRightComponent();
-                            pw.println("Settings for Julia / Phoenix Set.");
-                            pw.println(phoenixSet.getIterations());
-                            pw.println(phoenixSet.getMoveX());
-                            pw.println(phoenixSet.getMoveY());
-                            pw.println(phoenixSet.getMinX());
-                            pw.println(phoenixSet.getMaxX());
-                            pw.println(phoenixSet.getMinY());
-                            pw.println(phoenixSet.getMaxY());
-                            pw.println(phoenixSet.getBackgroundColor(0));
-                            pw.println(phoenixSet.getBackgroundColor(1));
-                            pw.println(phoenixSet.getForegroundColor());
-                            pw.println(phoenixSet.getCReal());
-                            pw.println(phoenixSet.getCImg());
+                            pw.println("Settings for Phoenix Set.");
+                            pw.println(phoenixSet.getIterations()); //number of iterations
+                            pw.println(phoenixSet.getMoveX()); //movement in X
+                            pw.println(phoenixSet.getMoveY()); //movement in Y
+                            pw.println(phoenixSet.getMinX()); //minimum X value read in the graph
+                            pw.println(phoenixSet.getMaxX()); //maximum X value read in the graph
+                            pw.println(phoenixSet.getMinY()); //minimum Y value read in the graph
+                            pw.println(phoenixSet.getMaxY()); //maximum Y value read in the graph
+                            pw.println(phoenixSet.getBackgroundColor(0)); //background color 1
+                            pw.println(phoenixSet.getBackgroundColor(1)); //background color 2
+                            pw.println(phoenixSet.getForegroundColor()); //foreground color
+                            pw.println(phoenixSet.getCReal()); //constant real value
+                            pw.println(phoenixSet.getCImg()); //constant imaginary value
+                            pw.println(phoenixSet.getPReal()); //multiplying constant real value
+                            pw.println(phoenixSet.getPImg()); //multiplying constant imaginary value
                         }
                         pw.close();                       
                     } catch (Exception exc) {
+                        //something went wrong with creating the file
                         JOptionPane.showMessageDialog(null, "The file " + fileName + " could not be opened for writing.", "ERROR", JOptionPane.ERROR_MESSAGE);
                         exc.printStackTrace();
                     }
                 }
                 break;
-            case LOAD_SETTINGS:
+            case LOAD_SETTINGS: //load settings from file
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setCurrentDirectory(new File("saved"));
-                FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("TXT Files", "txt");
+                FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("TXT Files", "txt");//only see txt file
                 fileChooser.setFileFilter(txtFilter);
                 int returnVal = fileChooser.showOpenDialog(null);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -126,8 +140,8 @@ public class FilesMenu extends JMenu implements ActionListener{
                         if (sc.hasNextLine()) {
                             firstLine = sc.nextLine();
                         }
-                        switch (firstLine) {
-                            case "Settings for Pythagoras Tree.":
+                        switch (firstLine) { //see which settings file we are reading
+                            case "Settings for Pythagoras Tree.": //create pythagoras tree with settings in file
                                 try {
                                     double angle = sc.nextDouble();
                                     int iterations = sc.nextInt();
@@ -164,7 +178,7 @@ public class FilesMenu extends JMenu implements ActionListener{
                                     JOptionPane.ERROR_MESSAGE);
                                 }
                                 break;
-                            case "Settings for Mandelbrot Set.":
+                            case "Settings for Mandelbrot Set.": //create mandelbrot set with settings in file
                                 try {
                                     int iterations = sc.nextInt();
                                     double moveX = sc.nextDouble();
@@ -205,7 +219,7 @@ public class FilesMenu extends JMenu implements ActionListener{
                                 }
                                 break;
 
-                                case "Settings for Julia / Phoenix Set.":
+                                case "Settings for Phoenix Set.": //read settings for phoenix set from file
                                 try {
                                     int _iterations = sc.nextInt();
                                     double _moveX = sc.nextDouble();
@@ -219,6 +233,8 @@ public class FilesMenu extends JMenu implements ActionListener{
                                     int _fgColor = sc.nextInt();
                                     double c_real = sc.nextDouble();
                                     double c_img = sc.nextDouble();
+                                    double p_real = sc.nextDouble();
+                                    double p_img = sc.nextDouble();
                                     PhoenixSet phoenixSet = 
                                     new PhoenixSet(_iterations,
                                     _moveX,
@@ -232,7 +248,11 @@ public class FilesMenu extends JMenu implements ActionListener{
                                     _fgColor,
                                     this.mainScreen,
                                     c_real,
-                                    c_img);
+                                    c_img,
+                                    p_real,
+                                    p_img,
+                                    PhoenixSet.SCREEN_X,
+                                    PhoenixSet.SCREEN_Y);
                                     mainScreen.setRightComponent(phoenixSet);
                                     PhoenixSetSidePanel sidePanel3 =
                                     new PhoenixSetSidePanel(mainScreen,
@@ -241,7 +261,9 @@ public class FilesMenu extends JMenu implements ActionListener{
                                     _bgColor2,
                                     _fgColor,
                                     c_real,
-                                    c_img);
+                                    c_img,
+                                    p_real,
+                                    p_img);
                                     mainScreen.setLeftComponent(sidePanel3);
                                 } catch (InputMismatchException exception) {
                                     JOptionPane.showMessageDialog(null,
@@ -261,6 +283,7 @@ public class FilesMenu extends JMenu implements ActionListener{
                         }
                         sc.close();
                     } catch (FileNotFoundException exc) {
+                        //the settings file is incorrect
                         JOptionPane.showMessageDialog(null,
                         "The file " + selectedFile.getName() + " could not be found.",
                         "ERROR",

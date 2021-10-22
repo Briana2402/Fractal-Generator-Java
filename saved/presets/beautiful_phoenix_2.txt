@@ -1,4 +1,4 @@
-Settings for Julia / Phoenix Set.
+Settings for Phoenix Set.
 1000
 -0.23773746014675254
 -0.1323692225747161
@@ -11,3 +11,5 @@ Settings for Julia / Phoenix Set.
 -14336
 -0.7
 0.27015
+0.0
+0.0

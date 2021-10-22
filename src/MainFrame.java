@@ -1,3 +1,8 @@
+/**
+ * @author Iliyan Teofilov
+ * @ID 1671952. Group2b
+ */
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -9,15 +14,27 @@ public class MainFrame extends JFrame {
     public final static Color sidePanelBackground = new Color (28, 35, 65);
     public final static Color menuBackground = new Color (19, 22, 35);
 
+    /**
+     * Creates the main screen frame that we see.
+     */
     MainFrame() {
         ImageIcon frameIcon = new ImageIcon("img/logo.png");
-        PythagorasTree fractalPanel = new PythagorasTree();
-        PythagorasTreeSidePanel sidePanel = new PythagorasTreeSidePanel(fractalPanel);
+        PythagorasTree fractalPanel = new PythagorasTree(PythagorasTree.STARTING_BG_COLOR,
+                                    PythagorasTree.STARTING_SQUARE_COLOR,
+                                    PythagorasTree.STARTING_TRIANGLE_COLOR,
+                                    PythagorasTree.STARTING_LINE_COLOR);
+        PythagorasTreeSidePanel sidePanel = new PythagorasTreeSidePanel(fractalPanel,
+                                    PythagorasTree.STARTING_ITERATIONS,
+                                    PythagorasTree.STARTING_ANGLE,
+                                    PythagorasTree.STARTING_BG_COLOR,
+                                    PythagorasTree.STARTING_SQUARE_COLOR,
+                                    PythagorasTree.STARTING_TRIANGLE_COLOR,
+                                    PythagorasTree.STARTING_LINE_COLOR);
         JSplitPane mainScreen = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         JMenuBar menuBar = new JMenuBar();
-        JMenu files = new FilesMenu();
+        JMenu files = new FilesMenu(mainScreen);
+        JMenu tools = new ToolsMenu(mainScreen);
         JMenu fractals = new FractalsMenu(mainScreen);
-        JMenu tools = new ToolsMenu(sidePanel, mainScreen);
         
         menuBar.add(files);
         menuBar.add(fractals);
